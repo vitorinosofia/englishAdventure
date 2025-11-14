@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board Game</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Itim&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="img/logo.png" />
+
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      background-image: url("imgs/floresta.png");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 100vh; width: 100vw;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden;
+    }
+    .topo {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 70px;
+      display: flex; justify-content: center; align-items: center;
+      padding: 0 40px; background: transparent;
+      font-family: "Irish Grover", sans-serif;
+      color: white; z-index: 10;
+    }
+    .titulo {
+      position: absolute; left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px; color: #ffffffd8;
+      letter-spacing: 2px;
+      font-family: "Irish Grover", sans-serif;
+    }
+    .sair {
+      position: absolute; right: 40px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+    }
+    .sair img {
+      width: 28px; height: 28px;
+      transition: 0.2s;
+    }
+    .sair img:hover { transform: scale(1.1); }
+
+    .question-container {
+      width: 600px; height: 400px;
+      background: rgba(255,255,255,0.65);
+      padding: 30px;
+      border-radius: 25px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      margin-left: 40%; margin-bottom: 5%;
+      z-index: 5;
+    }
+    .instruction {
+      font-size: 18px; margin-bottom: 5px; color: #555;
+    }
+    .question-phrase {
+      font-size: 30px; font-weight: 600;
+      margin-bottom: 15px; color: #333;
+    }
+
+    .input-wrapper {
+      position: relative; width: 80%; max-width: 400px;
+      margin-top: 24%;
+    }
+    
+    .text-input {
+      width: 100%; 
+      height:85%;
+      padding: 15px 20px; padding-right: 60px;
+      border: 2px solid #a3a3a3;
+      border-radius: 30px; font-size: 18px;
+      outline: none; transition: 0.3s ease;
+    }
+    .text-input:focus {
+      border-color: #865f3b;
+      box-shadow: 0 0 0 3px rgba(134,95,59,0.3);
+    }
+    .keyboard-icon {
+      position: absolute; right: 20px; top: 40%;
+      transform: translateY(-50%);
+      width: 28px; height: 28px; cursor: pointer;
+      filter: brightness(0.6); transition: 0.2s;
+    }
+    .keyboard-icon:hover { filter: brightness(0.4); }
+
+    .vocabulario-btn img, .pocao-btn img {
+      width: 36px; height: 38px;
+    }
+    .vocabulario-btn img { margin-left: 60%; }
+    .pocao-btn img { margin-right: 36%; }
+
+    #feedback {
+      margin-top: 15px;
+      font-size: 18px; font-weight: bold;
+    }
+
+    .bottom-left {
+      position: absolute; left: 0; bottom: 60px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pocao {
+      position: absolute; bottom: 60px; right: 0;
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 5px;
+    }
+
+    .vocabulario-btn, .pocao-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      transition: 0.2s; font-size: 16px; font-weight: 600;
+      padding: 20px 50px;
+    }
+    .vocabulario-btn {
+      border-radius: 0 39px 39px 0; padding: 20px 80px;
+    }
+    .pocao-btn {
+      border-radius: 39px 0 0 39px;
+    }
+    .vocabulario-btn:hover, .pocao-btn:hover { transform: scale(1.05); }
+
+    .help {
+      color: white; font-size: 14px; font-weight: 500; margin-right: 30px;
+    }
+
+    .overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.816);
+      display: none; justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    .overlay.show { display: flex; }
+    .overlay-content { max-width: 90%; max-height: 90%; animation: overlayAppear 0.3s ease-out; }
+    .overlay-content img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+
+    .xp-container {
+      position: absolute; left: 20px; bottom: 140px;
+      width: 200px; height: 40px; z-index: 10;
+    }
+    .xp-bar {
+      width: 100%; height: 18px;
+      background: #f4e3c7; border-radius: 10px; overflow: hidden;
+    }
+    .xp-fill {
+      height: 100%; width: 0%;
+      background: #4a2b17; transition: width 0.4s ease;
+    }
+    .dragon {
+      position: absolute; width: 50px;
+      top: -40px; left: 0; padding-left: 10px;
+      transition: left 0.4s ease;
+    }
+
+    @keyframes overlayAppear {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ---------------------------- */
+    /* BOTÃO DE ENVIAR ADICIONADO  */
+    /* ---------------------------- */
+    .send-btn {
+      margin-top: 15px;
+      padding: 12px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      width: 60%;
+      border-radius: 30px;
+      cursor: pointer;
+      background: #4a2b17;
+      color: white;
+      transition: 0.2s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+      background: #3a1f12;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header class="topo">
+    <h1 class="titulo">Espelhos de Midgard</h1>
+    <a href="#" class="sair"><img src="imgs/sair.png" alt="Sair" /></a>
+  </header>
+
+  <div class="question-container">
+    <p class="instruction">Reescreva na negativa</p>
+    <p class="question-phrase" id="questionPhrase">The warriors are confident.</p>
+
+    <div class="input-wrapper">
+      <input type="text" class="text-input" id="answerInput" placeholder="Write" />
+      <img src="imgs/teclado.png" alt="Teclado" class="keyboard-icon" />
+    </div>
+
+    <!-- BOTÃO DE ENVIAR AQUI -->
+    <button id="sendBtn" class="send-btn">Enviar</button>
+
+    <p id="feedback"></p>
+  </div>
+
+  <div class="xp-container">
+    <img src="imgs/dragao.png" class="dragon" id="dragon" />
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+  </div>
+
+  <div class="bottom-left">
+    <button class="vocabulario-btn">
+      <span>Dicionário</span>
+      <img src="imgs/dicionario.png" alt="Vocabulário" />
+    </button>
+  </div>
+
+  <div class="pocao">
+    <span class="help">Precisa de ajuda?</span>
+    <button class="pocao-btn">
+      <img src="imgs/poção.png" alt="Poção" />
+      <span class="btn-text">POÇÃO</span>
+    </button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <img src="images/cartas/inicio.png" alt="Troll" />
+    </div>
+    <button onclick="document.getElementById('overlay').classList.remove('show')">Fechar</button>
+  </div>
+
+  <script>
+    const answerInput = document.getElementById("answerInput");
+    const feedback = document.getElementById("feedback");
+
+    const phasePoints = {
+      1: { correct: 1, wrong: -1 },
+      2: { correct: 4, wrong: -4 },
+      3: { correct: 5, wrong: -5 }
+    };
+
+    let xp = parseInt(localStorage.getItem("xp")) || 0;
+    const maxXP = 100;
+    updateXPBar();
+
+    function updateXPBar() {
+      const fill = document.getElementById("xp-fill");
+      const dragon = document.getElementById("dragon");
+      let percent = Math.min((xp / maxXP) * 100, 100);
+      fill.style.width = percent + "%";
+      dragon.style.left = `calc(${percent}% - 20px)`;
+    }
+
+    function giveXP(phase, isCorrect) {
+      const points = phasePoints[phase];
+      xp += isCorrect ? points.correct : points.wrong;
+      if (xp < 0) xp = 0;
+      localStorage.setItem("xp", xp);
+      updateXPBar();
+    }
+
+    function processAnswer() {
+      const userAnswer = answerInput.value.trim().toLowerCase();
+
+      const acceptedAnswers = [
+        "the warriors aren't confident.",
+        "the warriors aren't confident",
+        "the warriors are not confident.",
+        "the warriors are not confident"
+      ];
+
+      if (acceptedAnswers.includes(userAnswer)) {
+        feedback.textContent = "✔ Resposta correta!";
+        feedback.style.color = "#2e7d32";
+        giveXP(1, true);
+      } else {
+        feedback.textContent = `✖ Resposta errada!`;
+        feedback.style.color = "#b71c1c";
+        giveXP(1, false);
+      }
+
+      answerInput.disabled = true;
+      document.querySelector(".keyboard-icon").style.pointerEvents = "none";
+
+      setTimeout(() => {
+        window.location.href = "parte3.php";
+      }, 3000);
+    }
+
+    answerInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        processAnswer();
+      }
+    });
+
+    // BOTÃO DE ENVIAR USANDO A MESMA FUNÇÃO
+    document.getElementById("sendBtn").addEventListener("click", processAnswer);
+
+    document.querySelector(".vocabulario-btn").addEventListener("click", () => {
+      document.getElementById("overlay").classList.add("show");
+    });
+
+    document.querySelector(".pocao-btn").addEventListener("click", () => {
+      alert("Poção de ajuda ativada!");
+    });
+  </script>
+</body>
+</html>

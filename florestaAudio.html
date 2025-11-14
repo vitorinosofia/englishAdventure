@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Floresta Escura de Huldra</title>
+<link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Itim&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/png" href="img/logo.png" />
+<style>
+:root {
+  --cor-principal-btn: #4a2b17;
+  --cor-correta-btn: #2e7d32;
+  --cor-errada-btn: #b71c1c;
+  --cor-opcoes: #7c604f;
+  --cor-texto-opcoes: #ffffff;
+}
+* {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: url("imgs/floresta.png") no-repeat center/cover;
+  height: 100vh; width: 100vw;
+  display: flex; justify-content: center; align-items: center;
+  overflow: hidden;
+}
+.topo {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 70px;
+  display: flex; justify-content: center; align-items: center;
+  padding: 0 40px; background: transparent;
+  color: white; font-family: "Irish Grover", sans-serif;
+  z-index: 10;
+}
+.titulo {
+  position: absolute; left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px; color: #ffffffd8;
+  letter-spacing: 2px; font-family: "Irish Grover", sans-serif;
+}
+.sair {
+  position: absolute; right: 40px;
+  display: flex; align-items: center; justify-content: center;
+}
+.sair img {
+  width: 28px; height: 28px; transition: .2s;
+}
+.sair img:hover { transform: scale(1.1); }
+
+.question-container {
+  width: 600px; min-height: 400px;
+  background: rgba(255,255,255,0.65);
+  padding: 30px; border-radius: 25px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+  display: flex; flex-direction: column;
+  text-align: center;
+  margin-left: 40%; margin-bottom: 5%;
+  z-index: 5;
+}
+.instruction { font-size: 18px; margin-bottom: 10px; color: #555; }
+
+.audio-prompt {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; background: rgba(255,255,255,0.8);
+  padding: 10px 20px; border-radius: 20px;
+  margin-bottom: 25px;
+}
+.play-icon {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer; background-color: var(--cor-principal-btn);
+}
+.play-icon::after {
+  content: "";
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid white;
+  margin-left: 3px;
+}
+.prompt-text { font-size: 18px; font-weight: 600; }
+
+.options-container { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+
+.option {
+  width: 100%; padding: 15px 20px;
+  border-radius: 15px; font-size: 16px; font-weight: 600;
+  display: flex; align-items: center; text-align: left;
+  cursor: pointer; color: var(--cor-texto-opcoes);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+.option:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.25);
+}
+.option-letter { font-size: 1.2em; font-weight: 700; margin-right: 15px; }
+
+.option-A { background: var(--cor-correta-btn); }
+.option-B, .option-C { background: var(--cor-opcoes); }
+
+.option.correct { background: var(--cor-correta-btn) !important; }
+.option.wrong { background: var(--cor-errada-btn) !important; }
+
+#feedback { margin-top: 15px; font-size: 18px; font-weight: bold; }
+
+.disabled { pointer-events: none; opacity: 0.8; }
+
+.xp-container {
+  position: absolute; left: 20px; bottom: 140px; width: 200px; height: 40px;
+}
+.xp-bar {
+  width: 100%; height: 18px;
+  background: #f4e3c7; border-radius: 10px;
+}
+.xp-fill {
+  height: 100%; width: 0%;
+  background: #4a2b17; transition: .4s;
+}
+.dragon {
+  position: absolute; width: 50px; top: -40px; left: 0;
+  padding-left: 10px; transition: .4s;
+}
+
+.vocabulario-btn, .pocao-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(255,255,255,0.95);
+  border: none; cursor: pointer; transition: .2s;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  padding: 20px; font-size: 16px; font-weight: 600;
+}
+.vocabulario-btn { border-radius: 0 39px 39px 0; padding-right: 80px; }
+.pocao-btn { border-radius: 39px 0 0 39px; padding-left: 50px; }
+
+.overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+.overlay.show { display: flex; }
+.overlay-content img { max-width: 100%; max-height: 90vh; }
+
+.placa-container { position: absolute; left: 0; bottom: 0; z-index: 6; }
+.placa-sign {
+  background: url('imgs/placa.png') no-repeat center/cover;
+  padding: 70px 30px 40px;
+  font-family: 'Irish Grover', sans-serif;
+  font-size: 24px; color: #f4e3c7;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  width: 300px;
+  position: absolute; left: 15%; bottom: 18%;
+  transform: translate(-50%, -50%);
+}
+.dragon-flame {
+  width: 50px; height: 50px;
+  position: absolute; top: -40px; left: 50%;
+  background: url('imgs/dragon_head.png') no-repeat center/contain;
+  transform: translateX(-50%);
+}
+.viking-shield-char {
+  position: absolute; right: 0; bottom: 0;
+  width: 250px; height: 250px;
+  background: url('imgs/viking_shield.png') no-repeat center/contain;
+}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1 class="titulo">A floresta escura de Huldra</h1>
+  <a href="#" class="sair"><img src="img/sair.png" alt="Sair" /></a>
+</header>
+
+<div class="placa-container">
+  <div class="dragon-flame"></div>
+  <div class="placa-sign">THE DARK FOREST OF HULDRA</div>
+</div>
+
+<div class="viking-shield-char"></div>
+
+<div class="question-container">
+  <p class="instruction">Escolha o que você ouviu</p>
+
+  <div class="audio-prompt">
+    <div class="play-icon" id="playAudio"></div>
+    <p class="prompt-text">The hero isn't tired.</p>
+  </div>
+
+  <div class="options-container" id="optionsContainer">
+    <button class="option option-A" data-answer="A"><span class="option-letter">A)</span> The hero isn't tired.</button>
+    <button class="option option-B" data-answer="B"><span class="option-letter">B)</span> The hero is tired.</button>
+    <button class="option option-C" data-answer="C"><span class="option-letter">C)</span> The hero aren't tired.</button>
+  </div>
+  <p id="feedback"></p>
+</div>
+
+<div class="xp-container">
+  <img src="imgs/dragao.png" class="dragon" id="dragon" />
+  <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+</div>
+
+<div class="bottom-left">
+  <button class="vocabulario-btn" onclick="showOverlay()">
+    <span>Dicionário</span><img src="imgs/dicionario.png" alt="Vocabulário" />
+  </button>
+</div>
+
+<div class="pocao">
+  <span class="help">Precisa de ajuda?</span>
+  <button class="pocao-btn" onclick="activatePotion()"><img src="imgs/poção.png" /> <span>POÇÃO DE HELP</span></button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-content"><img src="images/cartas/inicio.png" alt="Troll" /></div>
+  <button onclick="document.getElementById('overlay').classList.remove('show')">Fechar</button>
+</div>
+
+<script>
+const CORRECT_ANSWER = "A";
+let xp = parseInt(localStorage.getItem("xp")) || 0;
+const maxXP = 100;
+
+function updateXPBar() {
+  document.getElementById("xp-fill").style.width = Math.min((xp / maxXP) * 100, 100) + "%";
+  document.getElementById("dragon").style.left = `calc(${Math.min((xp / maxXP) * 100, 100)}% - 20px)`;
+}
+updateXPBar();
+
+function giveXP(phase, correct) {
+  const p = { 1: { correct: 1, wrong: -1 } }[phase];
+  xp += correct ? p.correct : p.wrong;
+  if (xp < 0) xp = 0;
+  localStorage.setItem("xp", xp);
+  updateXPBar();
+}
+
+function showOverlay() { document.getElementById("overlay").classList.add("show"); }
+function activatePotion() { alert("Poção de ajuda ativada!"); }
+
+document.getElementById("playAudio").onclick = () => alert('Reproduzindo áudio: "The hero isn\'t tired."');
+
+document.getElementById("optionsContainer").onclick = e => {
+  const btn = e.target.closest(".option");
+  if (!btn || btn.classList.contains("disabled")) return;
+
+  document.querySelectorAll(".option").forEach(o => o.classList.add("disabled"));
+
+  const correct = btn.dataset.answer === CORRECT_ANSWER;
+
+  if (correct) {
+    btn.classList.add("correct");
+    feedback.textContent = "✔ Resposta correta!";
+    feedback.style.color = "#2e7d32";
+  } else {
+    btn.classList.add("wrong");
+    document.querySelector(`[data-answer="${CORRECT_ANSWER}"]`).classList.add("correct");
+    feedback.textContent = "✖ Resposta errada! A correta está marcada em verde.";
+    feedback.style.color = "#b71c1c";
+  }
+
+  giveXP(1, correct);
+
+  setTimeout(() => alert("Próxima fase!"), 3000);
+};
+</script>
+</body>
+</html>

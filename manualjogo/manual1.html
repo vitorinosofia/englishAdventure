@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board Game</title>
+  <!-- Fonte Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-image: url("images/fundos/fundoManha.png");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .top-left {
+      position: absolute;
+      top: 50px;
+      left: 40px;
+    }
+
+    .top-right {
+      position: absolute;
+      top: 50px;
+      right: 40px;
+    }
+
+    .btn {
+      background-color: #5a3a1e;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 25px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .category {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      border-radius: 30px;
+      padding: 10px 25px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .timer-container {
+      width: 100%;
+      height: 10px;
+      background-color: rgba(200, 200, 200, 0.5);
+      border-radius: 10px;
+      overflow: visible;
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .timer-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #1c1c1c, #3a3a3a);
+      width: 100%;
+      border-radius: 10px;
+      animation: countdown 30s linear forwards;
+    }
+
+    @keyframes countdown {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    .question-box {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px 60px 50px 60px;
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .question-box h2 {
+      color: #666;
+      font-size: 22px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .question-box h1 {
+      font-size: 32px;
+      margin-bottom: 60px;
+      font-weight: 700;
+      color: #1c1c1c;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .option {
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 30px 50px;
+      font-size: 28px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 700;
+      min-width: 180px;
+    }
+
+    .option.true-btn {
+      background-color: #4caf50;
+    }
+
+    .option.false-btn {
+      background-color: #d32f2f;
+    }
+
+    .option:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    .option.selected-correct {
+      border: 4px solid #fff;
+      box-shadow: 0 0 0 4px #2e7d32, 0 4px 15px rgba(46, 125, 50, 0.4);
+      transform: scale(1.05);
+    }
+
+    .option.selected-wrong {
+      border: 4px solid #fff;
+      box-shadow: 0 0 0 4px #7f0000, 0 4px 15px rgba(127, 0, 0, 0.4);
+      opacity: 0.6;
+    }
+
+    .option.show-correct {
+      border: 4px solid #fff;
+      box-shadow: 0 0 0 4px #2e7d32, 0 4px 15px rgba(46, 125, 50, 0.4);
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .option:disabled {
+      cursor: not-allowed;
+    }
+
+    /* Rodapés */
+    .bottom-left, .pocao {
+      position: absolute;
+      bottom: 90px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bottom-left {
+      left: 0px;
+    }
+
+    .pocao {
+      position: absolute;
+      bottom: 90px;
+      right: 0px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .vocabulario-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 0 39px 39px 0;
+      padding: 20px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      transition: 0.2s;
+      font-size: 16px;
+    }
+
+    .pocao-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 39px 0 0 39px;
+      padding: 20px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      transition: 0.2s;
+      font-size: 16px;
+    }
+
+    .vocabulario-btn:hover, .pocao-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .vocabulario-btn img, .pocao-btn img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .help {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.816);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .overlay-content {
+      max-width: 90%;
+      max-height: 90%;
+      animation: overlayAppear 0.3s ease-out;
+    }
+
+    .overlay-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    @keyframes overlayAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Topo -->
+  <div class="top-left">
+    <button class="btn">Entenda seu jogo</button>
+  </div>
+ 
+  </div>
+
+  <!-- Pergunta -->
+  <div class="question-box">
+  
+    <h2>Read the sentence and choose:</h2>
+    <h1>"A dog can fly."</h1>
+   
+
+  <!-- Rodapé esquerdo -->
+  <div class="bottom-left">
+    <button class="vocabulario-btn">
+      <span>VOCABULARY</span>
+      <img src="images/vetores/Vocabulary.png" alt="Vocabulário" />
+    </button>
+  </div>
+  <div class="pocao">
+    <span class="help">Precisa de ajuda?</span>
+    <button class="pocao-btn">
+      <img src="images/vetores/Pocao.png" alt="Poção" />
+      <span class="btn-text">POÇÃO</span>
+    </button>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <img src="images/cartas/inicio.png" alt="Troll" />
+    </div>
+  </div>
+
+  <script>
+    const options = document.querySelectorAll(".option");
+    const overlay = document.getElementById("overlay");
+    let answered = false;
+
+    function showOverlay() {
+      overlay.classList.add("show");
+    }
+
+    options.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (answered) return;
+        
+        answered = true;
+        const isCorrect = btn.getAttribute("data-correct") === "true";
+        
+        // Desabilita todos os botões
+        options.forEach(o => o.disabled = true);
+        
+        // Marca a opção selecionada
+        if (isCorrect) {
+          btn.classList.add("selected-correct");
+        } else {
+          btn.classList.add("selected-wrong");
+          // Mostra qual é a correta
+          options.forEach(o => {
+            if (o.getAttribute("data-correct") === "true") {
+              o.classList.add("show-correct");
+            }
+          });
+          // Mostra o overlay após 1 segundo
+          setTimeout(showOverlay, 1000);
+        }
+      });
+    });
+
+    // Timer de 30 segundos - quando acabar, mostra a resposta correta e o overlay
+    setTimeout(() => {
+      if (!answered) {
+        options.forEach(o => {
+          o.disabled = true;
+          if (o.getAttribute("data-correct") === "true") {
+            o.classList.add("show-correct");
+          }
+        });
+        // Mostra o overlay após 1 segundo
+        setTimeout(showOverlay, 1000);
+      }
+    }, 30000);
+
+    // Clique no overlay para fechar
+    overlay.addEventListener("click", () => {
+      overlay.classList.remove("show");
+    });
+  </script>
+  
+</body>
+</html>
