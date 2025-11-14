@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Tema Viking</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Aplica o fade-in ao carregar a página */
+body {
+    animation: fadeIn 0.5s ease-in-out; /* 0.5s é o tempo da transição */
+}
+
+/* Classe que será adicionada ao clicar para iniciar o fade-out */
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out forwards;
+}
+        :root {
+            /* Cores Aproximadas do Tema */
+            --cor-principal: #562617; 
+            --cor-texto-principal: #562617; /* Marrom escuro */
+            --cor-fundo-card: rgba(255, 255, 255, 0.5); 
+            --cor-borda-input: #cccccc;
+            --cor-borda: #382416; 
+            --cor-botao: #FD716C;
+            --cor-borda-botao-foco: #007bff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif; 
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; 
+            position: relative;
+        }
+        
+        /* Botão Voltar */
+        /* ATENÇÃO: Aplicamos o link diretamente na tag <a> no HTML */
+        .botao-voltar-personalizado {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            gap: 5px; 
+
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            
+            color: white; /* Cor do texto "voltar" */
+            /* CORREÇÃO APLICADA AQUI para garantir a visibilidade */
+           
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px; /* Arredondamento */
+            cursor: pointer;
+            text-decoration: none; /* Remove sublinhado */
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s, opacity 0.3s;
+            line-height: 1; 
+            z-index: 30; /* Garante que fique acima de tudo */
+        }
+
+        .icone-voltar-img {
+            width: 20px; 
+            height: 20px;
+            left: 1px;
+        }
+
+        .botao-voltar-personalizado:hover {
+            opacity: 0.9;
+          
+        }
+
+        /* Estilização do Fundo */
+        .container-fundo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* NOTE: Caminho da imagem de fundo mantido como "../../imgs/barcoNOrio.png" */
+            background-image: url(../../imgs/barcoNOrio.png);
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-size: cover; 
+        }
+
+        /* Título Principal Fora da Caixa */
+        .titulo-principal {
+            position: absolute;
+            top: 100px; 
+            text-align: center;
+            z-index: 20; 
+        }
+
+        .titulo-principal h1 {
+            font-size: 36px;
+            color: var(--cor-principal);
+            font-weight: 700; 
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); 
+        }
+
+        .card-redefinir {
+            background-color: var(--cor-fundo-card);
+            padding: 50px 70px; 
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 750px; 
+            text-align: center;
+            position: relative; 
+            z-index: 10;
+            margin-top: 100px; 
+        }
+
+        .subtitulo {
+            font-size: 16px;
+            color: var(--cor-texto-principal);
+            opacity: 0.8; 
+            margin-bottom: 30px;
+            line-height: 1.5;
+            font-weight: 400; 
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--cor-texto-principal);
+            margin-bottom: 8px;
+            font-weight: 700; 
+            width: 100%;
+            max-width: 500px; /* Alinhando com a largura do input */
+            text-align: left; 
+        }
+
+        input[type="password"] {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--cor-borda-input);
+            border-radius: 10px; 
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-weight: 400; 
+            width: 100%;
+            max-width: 500px; 
+        }
+
+        input[type="password"]:focus {
+            border-color: var(--cor-botao);
+            box-shadow: 0 0 5px rgba(255, 99, 71, 0.5); 
+        }
+
+        .btn-redefinir {
+            background-color: var(--cor-botao);
+            color: var(--cor-texto-principal); 
+            padding: 12px 20px;
+            border: 1px solid var(--cor-borda); 
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700; 
+            margin-top: 10px;
+            transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+            width: 100%;
+            max-width: 400px; 
+        }
+
+        .btn-redefinir:focus {
+            outline: none;
+            border: 3px solid var(--cor-borda-botao-foco);
+        }
+
+        .btn-redefinir:hover {
+            background-color: #e5533c; 
+            transform: translateY(-1px); 
+        }
+
+        /* Ajustes de responsividade */
+        @media (max-width: 768px) {
+            .card-redefinir {
+                max-width: 90%; 
+                padding: 30px;
+                margin-top: 80px;
+            }
+            .titulo-principal {
+                top: 50px;
+            }
+            .titulo-principal h1 {
+                font-size: 30px;
+            }
+            .botao-voltar-personalizado {
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <a href="login.html" class="botao-voltar-personalizado">
+        <img src="../../imgs/botaoVoltar.png" alt="Voltar" class="icone-voltar-img">
+    </a>
+    
+    <div class="container-fundo">
+    </div>
+
+    <div class="titulo-principal">
+        <h1>Redefina a senha</h1>
+    </div>
+
+    <div class="card-redefinir">
+        
+        <p class="subtitulo">Tudo bem esquecer a senha às vezes, ainda bem que é possível criar outra!</p>
+        
+        <form action="../inicial.html" method="GET"> 
+            
+            <label for="nova-senha">Crie uma senha nova</label>
+            <input type="password" id="nova-senha" name="nova-senha" required>
+
+            <label for="confirma-senha">Confirme a senha</label>
+            <input type="password" id="confirma-senha" name="confirma-senha" required>
+
+            <button type="submit" class="btn-redefinir">Redefinir</button>
+        </form>
+    </div>
+</body>
+</html>

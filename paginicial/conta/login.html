@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - English Adventure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <style>
+        
+        :root {
+            --cor-principal: #562617;
+            --cor-secundaria: #60403c; /* Cor de link/destaque */
+            --cor-fundo-card: rgba(255, 255, 255, 0.3); /* Branco com 30% de transparência */
+            --cor-texto-principal: #562617;
+            --cor-texto-titulos: #562617; /* Título principal e labels */
+            --cor-criar-borda: #562617; /* Borda do botão "Entrar" */
+            --cor-botao-criar: #F78070; /* Cor do botão "Entrar" */
+            --cor-input-borda: #ccc;
+        }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Aplica o fade-in ao carregar a página */
+body {
+    animation: fadeIn 0.5s ease-in-out; /* 0.5s é o tempo da transição */
+}
+
+/* Classe que será adicionada ao clicar para iniciar o fade-out */
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out forwards;
+}
+        /* Estilos Gerais e Fundo */
+        body {
+            margin: 0;
+            padding: 0;
+            /* ALTERADO: Aplicação global da fonte Poppins */
+            font-family: 'Poppins', sans-serif; 
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            
+            /* PRESERVADO: Sua imagem de fundo */
+            background-image: url(../../imgs/barcoNOrio.png);
+            background-size: cover; /* Adicionado para garantir que cubra a tela */
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Botão Voltar (Estilo do Cadastro) */
+        .botao-voltar-personalizado {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            gap: 5px; 
+
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            
+            color: white; /* Cor do texto "voltar" */
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px; /* Arredondamento */
+            cursor: pointer;
+            text-decoration: none; /* Remove sublinhado */
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s, opacity 0.3s;
+            line-height: 1; 
+        }
+
+        .icone-voltar-img {
+            width: 20px; 
+            height: 20px;
+            left: 1px;
+        }
+
+        .botao-voltar-personalizado:hover {
+            opacity: 0.9;
+        }
+
+        /* Container principal: agrupa Título e Card, alinha à direita */
+        .main-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-end; 
+            padding-right: 10%; 
+            box-sizing: border-box;
+        }
+
+        /* Título Principal ("Olá de novo!") */
+        .card-title {
+            font-size: 2.5em;
+            color: var(--cor-texto-titulos);
+            font-weight: 700;
+            margin-bottom: 10px; 
+            margin-right: -39px; 
+            width: 450px; 
+            max-width: 90%; 
+            box-sizing: border-box;
+        }
+
+        /* Descrição (Adicionada para manter a mensagem do login) */
+        .greeting-description {
+            font-size: 1.1em;
+            color: var(--cor-texto-principal);
+            margin-bottom: 30px; 
+            font-weight: 700;
+            max-width: 500px; 
+            width: 480px; 
+            box-sizing: border-box;
+            align-self: flex-end; 
+            text-align: left;
+            margin-right: 30px; 
+        }
+        
+        /* Card de Login */
+        .signup-card { 
+            width: 450px; 
+            max-width: 90%;
+            padding: 40px;
+            border-radius: 15px;
+            
+            /* Efeito de Vidro Fosco (Glassmorphism) */
+            background: var(--cor-fundo-card);
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px); 
+            
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: left;
+        }
+
+        /* Estilos dos campos e botões */
+        .input-group {
+            margin-bottom: 25px; 
+        }
+        .input-group label {
+            display: block;
+            font-size: 1em;
+            color: var(--cor-texto-titulos); 
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid var(--cor-input-borda);
+            border-radius: 5px;
+            box-sizing: border-box;
+            outline: none;
+            background-color: white; 
+        }
+        
+        /* Link "Esqueci a senha" */
+        .forgot-password-link {
+            display: block;
+            text-align:left;
+            margin-top: -15px; 
+            margin-bottom: 25px;
+            color: #562617; 
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 1.0s;
+        }
+        .forgot-password-link:hover {
+            text-decoration: underline;
+            color:#783838 ;
+        }
+
+
+        /* Botão Principal "Entrar" */
+        .btn-enter { 
+            width: 60%;
+            padding: 15px;
+            margin-top: 20px;
+            margin-left: 20%;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--cor-texto-titulos);
+            background-color: var(--cor-botao-criar);
+            border: 2px solid var(--cor-criar-borda);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 1px 0px rgba(172, 31, 31, 0.141);
+        }
+        .btn-enter:hover {
+            background-color: #E66F60;
+            box-shadow: 0 4px 0px rgba(172, 31, 31, 0.3);
+        }
+        
+        /* Link "Cadastrar" */
+        .signup-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color:#562617;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 1.0s;
+        }
+
+        .signup-link:hover {
+            color:#783838
+        }
+
+        /* Media Queries para Responsividade */
+        @media (max-width: 900px) {
+            .main-container {
+                justify-content: flex-start; 
+                align-items: center;
+                padding: 50px 0; 
+            }
+            .signup-card, .card-title, .greeting-description {
+                width: 90%;
+                max-width: 450px;
+                text-align: center; 
+                margin-left: auto; /* Centraliza em mobile */
+                margin-right: auto;
+            }
+            .forgot-password-link {
+                text-align: center; 
+            }
+        }
+      
+    </style>
+</head>
+<body>
+    
+    <a href="../inicial.html" class="botao-voltar-personalizado">
+        <img src="../../imgs/botaoVoltar.png" alt="Voltar" class="icone-voltar-img">
+        
+    </a>
+
+    <div class="main-container">
+        
+        <h2 class="card-title">Olá de novo!</h2>
+        <p class="greeting-description">Coloque seus dados para começarmos a aventura juntos!</p>
+
+        <div class="signup-card">
+            <form>
+                <div class="input-group">
+                    <label for="email">Digite o email</label>
+                    <input type="email" id="email" name="email" placeholder="">
+                </div>
+
+                <div class="input-group">
+                    <label for="senha">Digite a senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="">
+                </div>
+                
+                <a href="redefinirsenha.html" class="forgot-password-link">Esqueci a senha</a>
+                
+                <button type="submit" class="btn-enter">Entrar</button>
+            </form>
+
+            <a href="cadastro.html" class="signup-link">Cadastrar</a>
+        </div>
+    </div>
+</body>
+</html>

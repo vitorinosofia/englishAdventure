@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comece a Jogar - Mapa de Aventura</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variáveis CSS para Cores */
+        :root {
+            --text-color-light: #fff;
+            --text-color-dark: #333;
+            --header-bg: #1a1a1a; 
+            --map-border: #6d4d2f; /* Cor da moldura, para os marcadores */
+            --marker-bg: rgba(255, 255, 255, 0.9); /* Fundo da bolinha branca */
+            --marker-text: #562617; /* Cor do texto dentro da bolinha */
+            --locked-marker-bg: rgba(255, 255, 255, 0.7); /* Fundo da bolinha bloqueada */
+            --locked-icon: url('../imgs/cadeado.png'); /* Caminho do cadeado, se precisar */
+            
+            /* Nova Cor para o Botão do Perfil (Marrom da imagem) */
+            --profile-button-bg: #7C604F; 
+        }
+
+        /* Reset Básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* FUNDO: A imagem completa é o background do corpo */
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            position: relative; 
+            
+            /* **AJUSTE O CAMINHO DA SUA IMAGEM COMPLETA DO MAPA AQUI!** */
+            background-image: url('../imgs/fases.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* ----------------------------------- */
+        /* CABEÇALHO (TOP BAR) - NOVO ESTILO */
+        /* ----------------------------------- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            /* Fundo escuro conforme a imagem */
+            background-color: #000; 
+            color: var(--text-color-light);
+            height: 60px; 
+            width: 100%;
+            z-index: 1000; 
+            position: relative;
+            /* Removida a borda inferior branca que não estava na imagem */
+            /* border-bottom: 2px solid rgba(255, 255, 255, 0.1); */
+        }
+        
+        /* Ajuste do Título para Cor e Fonte da Imagem (Exemplo de fonte mais estilizada se necessário) */
+        .page-title {
+            font-size: 1.8em; /* Aumentado um pouco para o estilo da imagem */
+            font-weight: 400; /* Pode ser ajustado se a fonte Poppins não for a final */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            /* Garante que o título fique no centro, empurrando os elementos laterais */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Ícone de Sair/Configurações à esquerda */
+        .left-icon-container {
+            width: 40px; 
+            height: 40px;
+            /* Estilo para simular o ícone de cursor/seta */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .left-icon-container img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Perfil de Usuário à Direita (Botão Marrom) */
+        .user-profile-button {
+            /* Cor de fundo marrom da imagem */
+            background-color: var(--profile-button-bg); 
+            color: var(--text-color-light);
+            font-size: 0.9em;
+            padding: 8px 15px;
+            border-radius: 30px; /* Mais arredondado */
+            font-weight: 700;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            line-height: 1.2;
+            text-align: center;
+            
+            /* Estilos adicionais para simular a pequena sombra/borda da imagem */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-profile-button span {
+            /* O texto é dividido em duas linhas na imagem, @nomado e jogador */
+            display: block;
+            line-height: 1;
+        }
+        
+        .username-top {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+        .role-bottom {
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        /* ----------------------------------- */
+        /* ÁREA DE CONTEÚDO PRINCIPAL (POSICIONAMENTO DOS MARCADORES) */
+        /* ----------------------------------- */
+        .content-area {
+            flex-grow: 1; 
+            position: relative; 
+            width: 100%;
+        }
+        
+        /* Ponto de referência invisível onde o mapa circular está no fundo */
+        .map-frame-reference {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            width: 65vh; 
+            height: 65vh;
+            max-width: 700px; 
+            max-height: 700px;
+        }
+
+        /* ----------------------------------- */
+        /* MARCADORES DE FASE (Comportamento Básico) */
+        /* ----------------------------------- */
+        .phase-marker {
+            width: 90px; 
+            height: 90px;
+            position: absolute;
+            border-radius: 50%;
+            background-color: var(--marker-bg);
+            border: 3px solid var(--map-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--marker-text);
+            font-weight: 700;
+            font-size: 0.9em;
+            text-align: center;
+            text-decoration: none; 
+            cursor: pointer;
+            
+            /* Regras comuns de background para o cadeado */
+            background-repeat: no-repeat;
+            background-size: 60%; /* Ajuste o tamanho do ícone */
+            background-position: center;
+            
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        /* Efeito de zoom genérico ao passar o mouse */
+        .phase-marker:hover {
+            transform: scale(1.1); 
+        }
+
+        /* Estilo para fases BLOQUEADAS (mantido, mas sem uso no HTML atual) */
+        .phase-marker.locked {
+            background-color: var(--locked-marker-bg);
+            cursor: not-allowed;
+            background-image: var(--locked-icon); 
+            background-size: 40%; 
+            background-position: center 70%; 
+            padding-top: 10px; 
+            color: rgba(86, 38, 23, 0.7); 
+        }
+        
+        .phase-marker.locked:hover {
+            transform: none; 
+        }
+
+        .marker-1 { 
+            top: 27%; 
+            left: 72%; 
+            background-image: url('../imgs/cadeadofase01.png'); /* IMAGEM PADRÃO */
+        }
+        .marker-1:hover {
+            background-image: url('../imgs/cadeadofase1.png');
+        }
+
+        /* FASE 2 (Central) */
+        .marker-2 { 
+            top: 44%; 
+            left: 45%;
+            background-image: url('../imgs/cadeadofase01.png'); /* IMAGEM PADRÃO */
+        }
+        .marker-2:hover {
+            background-image: url('../imgs/cadeadofase2.png'); /* IMAGEM HOVER */
+        }
+
+        /* FASE 3 (Inferior Esquerda) */
+        .marker-3 { 
+            top: 72%; 
+            left: 7%;
+            background-image: url('../imgs/cadeadofase01.png'); /* IMAGEM PADRÃO */
+        }
+        .marker-3:hover {
+            background-image: url('../imgs/cadeadofase3.png'); /* IMAGEM HOVER */
+        }
+
+        /* FASE 4 (Inferior Central) */
+        .marker-4 { 
+            top: 72%; 
+            left: 47%;
+            background-image: url('../imgs/cadeadofase01.png'); /* IMAGEM PADRÃO */
+        }
+        .marker-4:hover {
+            background-image: url('../imgs/cadeadofase4.png'); /* IMAGEM HOVER */
+        }
+
+
+        /* ----------------------------------- */
+        /* Responsividade Básica */
+        /* ----------------------------------- */
+        @media (max-width: 1024px) {
+            .map-frame-reference {
+                width: 80vw;
+                height: 80vw;
+            }
+            .phase-marker {
+                width: 80px;
+                height: 80px;
+                font-size: 0.8em;
+            }
+        }
+        @media (max-width: 600px) {
+            .map-frame-reference {
+                width: 90vw;
+                height: 90vw;
+            }
+            .phase-marker {
+                width: 70px;
+                height: 70px;
+                font-size: 0.7em;
+            }
+            /* Ajustes do cabeçalho para telas menores */
+            .top-bar {
+                padding: 10px 15px;
+            }
+            .page-title {
+                font-size: 1.4em;
+            }
+            .user-profile-button {
+                font-size: 0.8em;
+                padding: 6px 10px;
+            }
+            .username-top {
+                font-size: 0.7em;
+            }
+            .role-bottom {
+                font-size: 0.9em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        
+        <header class="top-bar">
+            <a href="#" class="left-icon-container">
+                <img src="../imgs/botaoVoltar.png" alt="Ícone de Sair/Menu">
+            </a>
+
+            <h1 class="page-title">Comece a jogar</h1> 
+
+            <a href="#" class="user-profile-button">
+        
+                <span class="role-bottom">Jogador</span>
+            </a>
+        </header>
+
+        <main class="content-area">
+            
+            <div class="map-frame-reference">
+                
+                <a href="fase1.html" class="phase-marker marker-1"></a>
+                <a href="fase2.html" class="phase-marker marker-2"></a>
+                <a href="fase3.html" class="phase-marker marker-3"></a> 
+                <a href="fase4.html" class="phase-marker marker-4"></a> 
+                
+            </div>
+        </main>
+        
+    </div>
+</body>
+</html>
